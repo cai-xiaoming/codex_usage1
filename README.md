@@ -22,28 +22,31 @@ scoop install wget
 powershell -ExecutionPolicy Bypass -File .\scripts\mirror_site.ps1
 ```
 
-可选参数：
+### 3) 启动本地预览（关键：从域名目录作为站点根目录）
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\mirror_site.ps1 -SiteUrl "https://linear-chuo-shinkansen.jr-central.co.jp/yamanashi/route/" -OutDir "mirror"
-```
-
-### 3) 本地预览
-
-```powershell
-cd mirror
-python -m http.server 8080
+powershell -ExecutionPolicy Bypass -File .\scripts\serve_mirror.ps1 -Port 8080
 ```
 
 浏览器打开：
 
-`http://127.0.0.1:8080/linear-chuo-shinkansen.jr-central.co.jp/yamanashi/route/`
+`http://127.0.0.1:8080/yamanashi/route/`
+
+> 不要打开 `http://127.0.0.1:8080/mirror/...` 这种路径；
+> 该站点有大量以 `/yamanashi/...` 开头的绝对路径资源，请把 `mirror/linear-chuo-shinkansen.jr-central.co.jp` 作为 HTTP 根目录。
 
 ## Linux/macOS（可选）
 
 ```bash
 bash scripts/mirror_site.sh
+bash scripts/serve_mirror.sh mirror linear-chuo-shinkansen.jr-central.co.jp 8080
 ```
+
+## 常见问题（你截图里的 404）
+
+如果 Console 出现大量 `404 /yamanashi/...`：
+- 原因：启动 `http.server` 的目录不对，导致资源去根路径找不到。
+- 解决：使用本仓库新增的 `serve_mirror.ps1`（或 `serve_mirror.sh`）启动，它会自动切到正确根目录。
 
 ## 说明
 
